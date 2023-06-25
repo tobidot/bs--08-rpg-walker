@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "lib": ["es6", "es2017", "DOM"],
+    "jsx": "react",
+    "noImplicitAny": false,
+    "noEmit": true,
+    "target": "ES2015",
+    "types": ["vite/client"]
+  },
+  "include": ["src/**/*"]
+}
