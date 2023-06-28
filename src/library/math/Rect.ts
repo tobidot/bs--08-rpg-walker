@@ -22,35 +22,30 @@ export interface BoundingBox {
 }
 
 /**
- * A rectangle with a center and a size
+ * A rectangle stored as center and a size.
+ * 
+ * But can be access in multiple ways:
+ * 
+ * - As a bounding box with left, right, top and bottom
+ * - As a rectangle with x, y (center) width and height
  */
 export class Rect implements RectLike, BoundingBox {
     public center: Vector2D;
     public size: Vector2D;
 
     /**
-     * Construct from a top left and a bottom right
-     * or from a center and a size
-     * @param other 
-     * @param top_y 
-     * @param width 
-     * @param height 
+     * Construct a rect from a rectlike object
+     * @param {RectLike} other 
      */
     constructor(
-        other: RectLike | number,
-        top_y?: number,
-        width?: number,
-        height?: number,
+        other?: RectLike
     ) {
-        if (other instanceof Object) {
-            this.center = new Vector2D(other.x + other.w / 2, other.y + other.h / 2);
-            this.size = new Vector2D(other.w, other.h);
+        if (!other) {
+            this.center = new Vector2D(0, 0);
+            this.size = new Vector2D(0, 0);
         } else {
-            assert(top_y !== undefined);
-            assert(width !== undefined);
-            assert(height !== undefined);
-            this.center = new Vector2D(other + width / 2, top_y + height / 2);
-            this.size = new Vector2D(width, height);
+            this.center = new Vector2D(other.x, other.y);
+            this.size = new Vector2D(other.w, other.h);
         }
     }
 
@@ -64,8 +59,8 @@ export class Rect implements RectLike, BoundingBox {
         size: Vector2DLike
     ): Rect {
         return new Rect({
-            x: center.x - size.x / 2,
-            y: center.y - size.y / 2,
+            x: center.x,
+            y: center.y,
             w: size.x,
             h: size.y,
         });
@@ -78,10 +73,23 @@ export class Rect implements RectLike, BoundingBox {
      */
     public static fromBoundingBox(bounding_box: BoundingBox): Rect {
         return new Rect({
-            x: bounding_box.left,
-            y: bounding_box.top,
+            x: bounding_box.left + (bounding_box.right - bounding_box.left) / 2,
+            y: bounding_box.top + (bounding_box.bottom - bounding_box.top) / 2,
             w: bounding_box.right - bounding_box.left,
             h: bounding_box.bottom - bounding_box.top,
+        });
+    }
+
+    /**
+     * Create a rect from a bounding box
+     * @param bounding_box 
+     * @returns 
+     */
+    public static fromLeftTopWidthHeight(left: number, top: number, width: number, height: number): Rect {
+        return Rect.fromBoundingBox({
+            left, top,
+            right: left + width,
+            bottom: top + height,
         });
     }
 
@@ -182,19 +190,19 @@ export class Rect implements RectLike, BoundingBox {
     }
 
     public get x() {
-        return this.left;
+        return this.center.x;
     }
 
     public get y() {
-        return this.top;
+        return this.center.y;
     }
 
-    public set x(value: number) {
-        this.left = value;
+    public set x(x: number) {
+        this.center.x = x;
     }
 
-    public set y(value: number) {
-        this.top = value;
+    public set y(y: number) {
+        this.center.y = y;
     }
 
     public get w() {
@@ -222,12 +230,10 @@ export class Rect implements RectLike, BoundingBox {
     }
 
     public set width(value: number) {
-        this.center.x += (value - this.size.x) / 2;
         this.size.x = value;
     }
 
     public set height(value: number) {
-        this.center.y += (value - this.size.y) / 2;
         this.size.y = value;
     }
 
@@ -247,20 +253,28 @@ export class Rect implements RectLike, BoundingBox {
         return this.center.y + this.size.y / 2;
     }
 
-    public set left(value: number) {
-        this.center.x = value + this.size.x / 2;
+    public set left(left: number) {
+        const right = this.right;
+        this.center.x = (left + right) / 2;
+        this.size.x = Math.abs(right - left);
     }
 
-    public set right(value: number) {
-        this.center.x = value - this.size.x / 2;
+    public set right(right: number) {
+        const left = this.left;
+        this.center.x = (left + right) / 2;
+        this.size.x = Math.abs(right - left);
     }
 
-    public set top(value: number) {
-        this.center.y = value + this.size.y / 2;
+    public set top(top: number) {
+        const bottom = this.bottom;
+        this.center.y = (top + bottom) / 2;
+        this.size.y = Math.abs(bottom - top);
     }
 
-    public set bottom(value: number) {
-        this.center.y = value - this.size.y / 2;
+    public set bottom(bottom: number) {
+        const top = this.top;
+        this.center.y = (top + bottom) / 2;
+        this.size.y = Math.abs(bottom - top);
     }
 
     public asBoundingBox(): BoundingBox {

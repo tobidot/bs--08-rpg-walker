@@ -1,8 +1,8 @@
 import { Rect } from "../../../../math/Rect";
+import { ViewSettings } from "../../View";
 import { MenuButtonModel } from "./MenuButtonModel";
 import { MenuGroupModel } from "./MenuGroupModel";
 import { MenuModel } from "./MenuModel";
-import { ViewSettings } from "../../../../../game/views/ViewSettings";
 
 export class MenuView {
     public constructor(
@@ -115,7 +115,7 @@ export class MenuView {
             area.width -= 24;
         }
         this.renderText(
-            model.name,
+            model.label,
             area,
         );
     }

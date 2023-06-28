@@ -66,10 +66,10 @@ export class MenuModel implements MenuModelControls {
         height?: number
     ) {
         this.id = globals.next_id++;
-        const area = this.area = new Rect(
+        const area = this.area = Rect.fromLeftTopWidthHeight(
             0, 0,
             width ?? 0, height ?? 0
-        );
+        )
     }
 
     public getGlobalBounds(): Rect {
@@ -140,13 +140,13 @@ export class MenuModel implements MenuModelControls {
         this.listeners.forEach(listener => listener(this));
         // propagate the event to the parent menu
         let parent = this.parent;
-        while(parent) {
+        while (parent) {
             parent.listeners.forEach(listener => listener(this));
             parent = parent.parent;
         }
     }
 
-    public escape() : void {}
+    public escape(): void { }
     public next(amount?: number | undefined): void { }
     public previous(amount?: number | undefined): void { }
 

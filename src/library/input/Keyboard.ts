@@ -49,7 +49,7 @@ export class KeyboardHandler {
         /**
          *  @var controller_callback a callback that returns the controller that will handle the keyboard input 
          */
-        public controller_callback: () => Array<KeyboardController>
+        public controller_callback: () => KeyboardController
     ) {
     }
 
@@ -89,9 +89,7 @@ export class KeyboardHandler {
         const key = this.getKey(key_name);
         key.is_down = true;
         key.since = event.timeStamp;
-        this.controller_callback().forEach(
-            controller => controller.onKeyDown?.(new KeyDownEvent(key))
-        );
+        this.controller_callback().onKeyDown?.(new KeyDownEvent(key));
     }
 
     /**
@@ -103,9 +101,7 @@ export class KeyboardHandler {
         const key = this.getKey(key_name);
         key.is_down = false;
         key.since = event.timeStamp;
-        this.controller_callback().forEach(
-            controller => controller.onKeyUp?.(new KeyDownEvent(key))
-        );
+        this.controller_callback().onKeyUp?.(new KeyDownEvent(key));
     }
 
     /**
@@ -118,9 +114,7 @@ export class KeyboardHandler {
             const key = this.getKey(key_name);
             key.is_down = false;
             key.since = event.timeStamp;     
-            this.controller_callback().forEach(
-                controller => controller.onKeyUp?.(new KeyDownEvent(key))
-            ); 
+            this.controller_callback().onKeyUp?.(new KeyDownEvent(key));
         });
     }
 

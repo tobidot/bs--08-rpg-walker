@@ -1,21 +1,39 @@
 import { AssetManager } from "../../library";
-import ball_blue from "../../../../assets/images/ball-blue.png";
-import brick_red from "../../../../assets/images/brick-red.png";
-import brick_metal from "../../../../assets/images/brick-metal.png";
-import background from "../../../../assets/images/background.png";
+import arwin_north_east from "../../../../assets/images/arwin-the-swordsman/arwin-the-swordsman-north-east.png";
+import arwin_north_west from "../../../../assets/images/arwin-the-swordsman/arwin-the-swordsman-north-west.png";
+import arwin_south_east from "../../../../assets/images/arwin-the-swordsman/arwin-the-swordsman-south-east.png";
+import arwin_south_west from "../../../../assets/images/arwin-the-swordsman/arwin-the-swordsman-south-west.png";
+import tower from "../../../../assets/images/tower.png";
 import heart from "../../../../assets/images/heart.png";
-import sound from "../../../../assets/icons/sound.png";
-import music from "../../../../assets/icons/music.png";
-import hit_brick from "../../../../assets/sounds/hit-gong.wav";
-import hit_wall from "../../../../assets/sounds/hit-bip.wav";
-import hit_paddle from "../../../../assets/sounds/hit-bop.wav";
-import hit_ball from "../../../../assets/sounds/hit-bip.wav";
-import background_music from "../../../../assets/music/chat-gpt-1-retro-rythm-revival.wav";
+import coin from "../../../../assets/images/coin.png";
+import slime_west from "../../../../assets/images/slime/slime-left.png";
+import slime_east from "../../../../assets/images/slime/slime-right.png";
+import select from "../../../../assets/sounds/select.wav";
+import slime_dead from "../../../../assets/sounds/slime-dead.wav";
 
 export const Assets = {
     images: {
+        arwin: {
+            north_east: arwin_north_east,
+            north_west: arwin_north_west,
+            south_east: arwin_south_east,
+            south_west: arwin_south_west,
+        },
+        slime: {
+            east: slime_east,
+            west: slime_west,
+        },
+        tower: {
+            default: tower
+        },
+        hud: {
+            heart,
+            coin,
+        }
     },
     sounds: {
+        select,
+        slime_dead
     },
     musics: {
     }
@@ -23,13 +41,26 @@ export const Assets = {
 
 export function registerAssets(asset_manager: AssetManager) {
     // Register images
-    for( let key in Assets.images) {
-        asset_manager.addImage(key, Assets.images[key]);
-    };
-    for( let key in Assets.sounds) {
-        asset_manager.addSound(key, Assets.sounds[key]);
-    };
-    for( let key in Assets.musics) {
-        asset_manager.addMusic(key, Assets.musics[key]);
-    };
+    forEveryString(Assets.images, (key, value) => {
+        asset_manager.addImage(value, value);
+    });
+    forEveryString(Assets.sounds, (key, value) => {
+        asset_manager.addSound(value, value);
+    });
+    forEveryString(Assets.musics, (key, value) => {
+        asset_manager.addMusic(value, value);
+    });
+}
+
+type StringMap = {[key: string]: string|StringMap};
+
+function forEveryString(object:StringMap, callback: (key:string, value:string) => void) {
+    for (let key in object) {
+        let value = object[key];
+        if (typeof value === "string") {
+            callback(key, value);
+            continue;
+        }
+        forEveryString(value, callback);
+    }
 }

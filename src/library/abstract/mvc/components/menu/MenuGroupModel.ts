@@ -18,7 +18,7 @@ export class MenuGroupModel extends MenuButtonModel implements MenuGroupModelCon
     public padding: number = 10;
     public item_height: number = 28;
     public spacing: number = 4;
-    public child_area: Rect = new Rect(0, 0, 0, 0);
+    public child_area: Rect = new Rect({x:0, y:0, w:0, h:0});
     public icon_open: string | null = null;
     public icon_close: string | null = null;
     //
@@ -38,7 +38,7 @@ export class MenuGroupModel extends MenuButtonModel implements MenuGroupModelCon
         child_area_width?: number
     ) {
         super(globals, name, width, height);
-        this.child_area = new Rect(
+        this.child_area = Rect.fromLeftTopWidthHeight(
             this.area.right + this.padding,
             this.area.top,
             (child_area_width ?? this.area.width) + this.padding * 2,
@@ -60,7 +60,7 @@ export class MenuGroupModel extends MenuButtonModel implements MenuGroupModelCon
             icon: this.icon,
             icon_close: this.icon_close,
             icon_open: this.icon_open,
-            callback: (button: MenuButtonModel) => { 
+            callback: (button: MenuButtonModel) => {
                 this.appendChild(button);
             },
         });
@@ -146,7 +146,7 @@ export class MenuGroupModel extends MenuButtonModel implements MenuGroupModelCon
             offset_top += this.item_height + this.spacing;
             child.refresh();
         });
-        this.child_area = new Rect(
+        this.child_area = Rect.fromLeftTopWidthHeight(
             this.area.right + this.padding,
             this.area.top,
             width + this.padding * 2,

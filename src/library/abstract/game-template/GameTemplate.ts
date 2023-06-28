@@ -1,12 +1,15 @@
 import { assertNotNull } from "../../flow";
 import * as tgt from "../../index";
+import { ControllerResponse, KeyDownEvent, MouseDownEvent } from "../../index";
 import { MenuController } from "../mvc/components/menu/MenuController";
+import { MenuView } from "../mvc/components/menu/MenuView";
+
 
 /**
  * A base template for a game
  */
 export abstract class GameTemplate<
-    MODEL extends tgt.Model & { menu?: tgt.MenuGroupModel },
+    MODEL extends tgt.Model,
     VIEW extends tgt.View,
     CONTROLLER extends tgt.KeyboardController & tgt.MouseController & tgt.Controller,
 > {
@@ -19,7 +22,6 @@ export abstract class GameTemplate<
     public model: MODEL;
     public view: VIEW;
     public controller: CONTROLLER;
-    public menu_controller?: MenuController;
     // properties
     public last_time_ms: number = 0;
     public loading_promise: Promise<void> = Promise.resolve();
@@ -35,30 +37,26 @@ export abstract class GameTemplate<
         this.assets = new tgt.AssetManager();
         this.registerAssets(this.assets);
         this.loading_promise = this.loading_promise.then(() => this.assets.loadAll(context));
+        this.keyboard = new tgt.KeyboardHandler(app, () => this.getKeyboardController());
+        this.mouse = new tgt.MouseHandler(app, canvas, () => this.getMouseController());
         const mvc = this.initMvc(context);
         this.model = mvc.model;
         this.controller = mvc.controller;
         this.view = mvc.view;
-        if ("menu" in this.model && !!this.model.menu && this.model.menu instanceof tgt.MenuModel) {
-            this.menu_controller = new MenuController(this.model.menu);
-        }
-        this.keyboard = new tgt.KeyboardHandler(app, () => this.getKeyboardControllers());
-        this.mouse = new tgt.MouseHandler(app, canvas, () => this.getMouseControllers());
     }
-    
-    protected getKeyboardControllers(): Array<tgt.KeyboardController> {
-        return [this.controller, this.menu_controller].filter((c): c is CONTROLLER => !!c);
+
+    protected getKeyboardController(): tgt.KeyboardController {
+        return this.controller;
     };
-    protected getMouseControllers(): Array<tgt.MouseController> {
-        return [this.controller, this.menu_controller].filter((c): c is CONTROLLER => !!c);
+    protected getMouseController(): tgt.MouseController {
+        return this.controller;
     };
     protected abstract registerAssets(assets: tgt.AssetManager): void;
-    protected abstract initMvc(context: CanvasRenderingContext2D) : this;
+    protected abstract initMvc(context: CanvasRenderingContext2D): this;
     protected abstract newGame(resolve: () => void, reject: (reason?: any) => void): void;
 
     protected update(delta_ms: number) {
         this.controller.update(delta_ms / 1000);
-        this.menu_controller?.update(delta_ms / 1000);
         this.view.update(delta_ms / 1000);
         this.view.render(this.model);
     }
@@ -91,5 +89,84 @@ export abstract class GameTemplate<
                     requestAnimationFrame(this.onFrame);
                 })
             });
+    }
+}
+
+/**
+ * The controller for a game already handling menu input
+ */
+export abstract class GameBaseController {
+    public menu_controller: MenuController;
+
+    public constructor(
+        protected readonly game: { mouse: tgt.MouseHandler, model: { menu: tgt.MenuGroupModel } },
+    ) {
+        this.menu_controller = new MenuController(
+            this.game.mouse,
+            this.game.model.menu
+        );
+    }
+
+    /**
+    * Propagate the update to the menu model.
+    * @param delta_seconds 
+    * @returns 
+    */
+    public update(delta_seconds: number): ControllerResponse {
+        this.menu_controller.update(delta_seconds);
+        return null;
+    }
+
+    /**
+     * Handle keyboard input for the menu.
+     * @param event 
+     */
+    public onKeyDown(
+        event: KeyDownEvent
+    ): void {
+        this.menu_controller.onKeyDown(event);
+    }
+
+    /**
+     * Check if a menu item has been clicked
+     * @param event 
+     */
+    public onMouseUp(event: MouseDownEvent): void {
+        this.menu_controller.onMouseUp(event);
+    }
+}
+
+export abstract class GameBaseView {
+    public settings: tgt.ViewSettings = {
+        color_primary: "#fff",
+        color_secondary: "#000",
+        color_tertiary: "#444",
+        font_family: "monospace",
+        font_size_text: 16,
+    };
+    public menu_view: MenuView;
+
+    public constructor(
+        public context: CanvasRenderingContext2D,
+    ) {
+        this.menu_view = new MenuView(context, this.settings);
+    }
+
+    public render(model: { menu: tgt.MenuGroupModel }): void {
+        this.resetCanvasState();
+        this.menu_view.render(model.menu);
+    }
+
+    /**
+     * Reset default canvas state and paint the background
+     */
+    protected resetCanvasState() {
+        this.context.fillStyle = this.settings.color_secondary;
+        this.context.fillRect(0, 0, 800, 600);
+        this.context.fillStyle = this.settings.color_primary;
+        this.context.font = this.settings.font_size_text + "px " + this.settings.font_family;
+        this.context.textAlign = "center";
+        this.context.textBaseline = "middle";
+        this.context.imageSmoothingEnabled = false;
     }
 }

@@ -75,6 +75,7 @@ interface MenuButtonGeneratorSettings {
     width?: number;
     height?: number;
     icon?: string | null;
+    label?: string | null;
     parent?: MenuGroupModel;
     on_select?: (button: MenuModel) => void;
     callback?: (button: MenuButtonModel) => void;
@@ -102,11 +103,12 @@ export class MenuButtonGenerator extends MenuModelGenerator<MenuButtonGeneratorS
      * Create an actual instance of the button.
      * @param name 
      */
-    public make(name: string): MenuButtonModel {
+    public make(name: string, label?: string): MenuButtonModel {
         const item = new MenuButtonModel(
             this.globals,
             name,
         );
+        item.label = label ?? this.data.label ?? name ?? "";
         item.area.left = this.data.x ?? 0;
         item.area.top = this.data.y ?? 0;
         item.area.width = this.data.width ?? 0;
@@ -133,6 +135,7 @@ interface MenuGroupGeneratorSettings {
     child_area_width?: number;
     icon_open?: string | null;
     icon_close?: string | null;
+    label?: string | null;
     parent?: MenuGroupModel;
     on_select?: (button: MenuModel) => void;
     callback?: (button: MenuGroupModel) => void;
@@ -164,11 +167,12 @@ export class MenuGroupGenerator extends MenuModelGenerator<MenuGroupGeneratorSet
      * Create an actual instance of the button.
      * @param name 
      */
-    public make(name: string): MenuGroupModel {
+    public make(name: string, label?:string): MenuGroupModel {
         const item = new MenuGroupModel(
             this.globals,
             name,
         );
+        item.label = label ?? this.data.label ?? name ?? "";
         item.area.left = this.data.x ?? 0;
         item.area.top = this.data.y ?? 0;
         item.area.width = this.data.width ?? 0;
@@ -186,17 +190,19 @@ export class MenuGroupGenerator extends MenuModelGenerator<MenuGroupGeneratorSet
     }
 }
 
-interface MenuDefinitionGroup {
+export interface MenuDefinitionGroup {
     name: string;
+    label?: string;
     width: number;
     children: Array<MenuDefinitionItem>;
 }
 
-interface MenuDefinitionButton {
+export interface MenuDefinitionButton {
     name: string;
+    label?: string;
 }
 
-type MenuDefinitionItem = MenuDefinitionButton | MenuDefinitionGroup;
+export type MenuDefinitionItem = MenuDefinitionButton | MenuDefinitionGroup;
 
 export class MenuGenerator extends Configurable<MenuButtonGeneratorSettings & MenuGroupGeneratorSettings> {
     public static readonly default: Partial<MenuButtonGeneratorSettings & MenuGroupGeneratorSettings> = {};
@@ -221,11 +227,11 @@ export class MenuGenerator extends Configurable<MenuButtonGeneratorSettings & Me
     ): MenuModel {
         if (!("children" in menu_definition)) {
             return this.button()
-                .make(menu_definition.name);
+                .make(menu_definition.name, menu_definition.label);
         }
         const group = this.group()
             .set("width", menu_definition.width)
-            .make(menu_definition.name);
+            .make(menu_definition.name, menu_definition.label);
         for (const child of menu_definition.children) {
             group.childGenerator().compile(child);
         }

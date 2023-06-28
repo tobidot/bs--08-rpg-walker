@@ -4,6 +4,7 @@ import { Collision, PhysicsProxiable, PhysicsProxy, PhysicsEngine } from "./Phys
 
 export interface AABBPhysicsEngineOptions {
     world_box: Rect;
+    // solve_collisions?: boolean;
     simple_collisions?: boolean;
 }
 

@@ -22,8 +22,8 @@ export class Game extends tgt.GameTemplate<
      * @returns 
      */
     protected initMvc(context: CanvasRenderingContext2D): this {
-        this.model = new GameModel();
-        this.controller = new GameController(this.model);
+        this.model = new GameModel(this);
+        this.controller = new GameController(this);
         this.view = new GameView(context);
         return this;
     }
@@ -45,5 +45,6 @@ export class Game extends tgt.GameTemplate<
         resolve: () => void,
         reject: (reason?: any) => void
     ): void {
+        this.model.restart();
     }
 }

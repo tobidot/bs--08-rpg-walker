@@ -1,4 +1,4 @@
-import { KeyDownEvent, KeyName, KeyboardController, MouseController, MouseDownEvent } from "../../../../input";
+import { KeyDownEvent, KeyName, KeyboardController, MouseController, MouseDownEvent, MouseHandler } from "../../../../input";
 import { Vector2D } from "../../../../math";
 import { Controller } from "../../Controller";
 import { Model } from "../../Model";
@@ -11,6 +11,7 @@ import { MenuModel } from "./MenuModel";
 export class MenuController implements Controller, KeyboardController, MouseController {
 
     public constructor(
+        protected readonly mouse: MouseHandler,
         public menu: MenuGroupModel
     ) {
     }
@@ -21,7 +22,7 @@ export class MenuController implements Controller, KeyboardController, MouseCont
      * @returns 
      */
     public update(delta_seconds: number): ControllerResponse {
-        this.menu.update(delta_seconds, game.mouse);
+        this.menu.update(delta_seconds, this.mouse);
         return null;
     }
 
@@ -74,7 +75,7 @@ export class MenuController implements Controller, KeyboardController, MouseCont
      */
     public onMouseUp(event: MouseDownEvent): void {
         const menu = this.menu;
-        const mouse = game.mouse;
+        const mouse = this.mouse;
         const mouse_position = mouse.position.cpy();
         this.checkMouseSelect(menu, mouse_position);
     }
