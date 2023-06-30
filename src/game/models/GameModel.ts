@@ -21,8 +21,9 @@ export class GameModel {
 
     public constructor(
         protected readonly game: Game,
+        context: CanvasRenderingContext2D,
     ) {
-        this.menu = this.createMenu();
+        this.menu = this.createMenu(context);
         this.physics = new AABBPhysicsEngine({
             world_box: Rect.fromBoundingBox({ left: 0, top: 0, right: 800, bottom: 600 }),
             simple_collisions: false,
@@ -66,8 +67,10 @@ export class GameModel {
         this.entities = this.entities.filter(e => e.id !== entity.id);
     }
 
-    public createMenu(): MenuGroupModel {
-        const globals = new MenuGlobals();
+    public createMenu(
+        context: CanvasRenderingContext2D,
+    ): MenuGroupModel {
+        const globals = new MenuGlobals(context);
         globals.asset_manager = this.game.assets;
         globals.audio_player = this.game.audio;
         globals.primary_color = "#fff";

@@ -14,4 +14,11 @@ export class MenuButtonModel extends MenuModel {
         super(globals, name, width, height);
         this.label ??= name;
     }
+
+    public refresh(): void {
+        const ctx = this.globals.ctx;
+        const box = ctx.measureText(this.label);
+        this.area.width = box.width + 6;
+        this.area.height = box.fontBoundingBoxAscent + box.fontBoundingBoxDescent + 6;
+    }
 }

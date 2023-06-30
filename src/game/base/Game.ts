@@ -22,9 +22,9 @@ export class Game extends tgt.GameTemplate<
      * @returns 
      */
     protected initMvc(context: CanvasRenderingContext2D): this {
-        this.model = new GameModel(this);
-        this.controller = new GameController(this);
         this.view = new GameView(context);
+        this.model = new GameModel(this, context);
+        this.controller = new GameController(this);
         return this;
     }
 

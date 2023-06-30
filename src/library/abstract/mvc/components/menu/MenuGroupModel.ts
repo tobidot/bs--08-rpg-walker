@@ -17,7 +17,7 @@ export class MenuGroupModel extends MenuButtonModel implements MenuGroupModelCon
     //
     public padding: number = 10;
     public item_height: number = 28;
-    public spacing: number = 4;
+    public spacing: number = 8;
     public child_area: Rect = new Rect({x:0, y:0, w:0, h:0});
     public icon_open: string | null = null;
     public icon_close: string | null = null;
@@ -104,7 +104,9 @@ export class MenuGroupModel extends MenuButtonModel implements MenuGroupModelCon
      */
     public appendChild<T extends MenuModel>(child: T): T {
         child.parent = this;
+        const height = child.area.height;
         child.area.top = this.spacing * 2 + this.children.length * (this.item_height + this.spacing);
+        child.area.bottom = child.area.top + height;
         this.children.push(child);
         this.child_area.height += (child.area.height + this.spacing);
         return child;
@@ -135,23 +137,21 @@ export class MenuGroupModel extends MenuButtonModel implements MenuGroupModelCon
      * Also recalculates the size of the child area.
      */
     public refreshChildren() {
-        let offset_top = this.spacing * 2;
+        this.children.forEach((child: MenuModel, index: number) => {
+            child.refresh();
+        });
         let width = this.children.reduce((width: number, child: MenuModel) => {
             return Math.max(width, child.area.width);
         }, 0);
+        let offset_top = this.spacing;
         this.children.forEach((child: MenuModel, index: number) => {
+            const height = child.area.height;
             child.area.left = this.padding;
             child.area.top = offset_top;
-            child.area.width = width;
-            offset_top += this.item_height + this.spacing;
-            child.refresh();
+            child.area.right = this.padding + width;
+            child.area.bottom = offset_top + height;
+            offset_top += height + this.spacing;
         });
-        this.child_area = Rect.fromLeftTopWidthHeight(
-            this.area.right + this.padding,
-            this.area.top,
-            width + this.padding * 2,
-            offset_top + this.spacing,
-        );
     }
 
     /**
@@ -165,13 +165,17 @@ export class MenuGroupModel extends MenuButtonModel implements MenuGroupModelCon
         if (this.children.length === 0) {
             width = this.child_area.width;
         }
-        const height = this.children.reduce((height: number, child: MenuModel) => {
-            return height + child.area.height + this.spacing;
+        const bottom = this.children.reduce((bottom: number, child: MenuModel) => {
+            const next_bottom = child.area.bottom + this.spacing * 2;
+            if (next_bottom > bottom) {
+                return next_bottom;
+            }
+            return bottom;
         }, this.spacing * 3);
-        this.child_area.left = (width - this.child_area.width) / 2;
-        this.child_area.top = (height - this.child_area.height) / 2;
-        this.child_area.width = width;
-        this.child_area.height = height;
+        this.child_area.left = this.area.right + this.padding * 2;
+        this.child_area.top = this.area.top;
+        this.child_area.right = this.child_area.left + width ;
+        this.child_area.bottom = bottom;
         return this.child_area;
     }
 
@@ -179,8 +183,8 @@ export class MenuGroupModel extends MenuButtonModel implements MenuGroupModelCon
      * Recalculate the area for the children enclosing all of them.
      */
     public refreshChildAreaPosition(): Rect {
-        this.child_area.left = this.area.right + this.padding * 2;
-        this.child_area.top = this.area.top;
+        this.child_area.moveLeft( this.area.right + this.padding * 2 );
+        this.child_area.moveTop( this.area.top );
         return this.child_area;
     }
 

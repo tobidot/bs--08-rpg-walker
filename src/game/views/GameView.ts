@@ -14,6 +14,7 @@ export class GameView extends GameBaseView implements View {
         public context: CanvasRenderingContext2D,
     ) {
         super(context);
+        this.resetCanvasState();
     }
 
     public update(delta_ms: number): void {

@@ -189,6 +189,42 @@ export class Rect implements RectLike, BoundingBox {
         );
     }
 
+    /**
+     * Change only the position such that the top side is at the given value
+     * @param top 
+     */
+    public moveTop(top: number) {
+        const offset = top - this.top;
+        this.center.y += offset;
+    }
+    
+    /**
+     * Change only the position such that the bottom side is at the given value
+     * @param bottom 
+     */
+    public moveBottom(bottom: number) {
+        const offset = bottom - this.bottom;
+        this.center.y += offset;
+    }
+
+    /**
+     * Change only the position such that the left side is at the given value
+     * @param left 
+     */
+    public moveLeft(left: number) {
+        const offset = left - this.left;
+        this.center.x += offset;
+    }
+    
+    /**
+     * Change only the position such that the right side is at the given value
+     * @param right 
+     */
+    public moveRight(right: number) {
+        const offset = right - this.right;
+        this.center.x += offset;
+    }
+
     public get x() {
         return this.center.x;
     }
@@ -256,25 +292,25 @@ export class Rect implements RectLike, BoundingBox {
     public set left(left: number) {
         const right = this.right;
         this.center.x = (left + right) / 2;
-        this.size.x = Math.abs(right - left);
+        this.size.x = right - left;
     }
 
     public set right(right: number) {
         const left = this.left;
         this.center.x = (left + right) / 2;
-        this.size.x = Math.abs(right - left);
+        this.size.x = right - left;
     }
 
     public set top(top: number) {
         const bottom = this.bottom;
         this.center.y = (top + bottom) / 2;
-        this.size.y = Math.abs(bottom - top);
+        this.size.y =bottom - top;
     }
 
     public set bottom(bottom: number) {
         const top = this.top;
         this.center.y = (top + bottom) / 2;
-        this.size.y = Math.abs(bottom - top);
+        this.size.y = bottom - top;
     }
 
     public asBoundingBox(): BoundingBox {

@@ -122,7 +122,9 @@ export class MouseHandler {
     protected onResize = () => {
         const rect = this.canvas.getBoundingClientRect();
         this.canvas_rect = Rect.fromBoundingBox(rect);
-        this.screen_rect = new Rect(0, 0, this.canvas.width, this.canvas.height);
+        this.screen_rect = Rect.fromBoundingBox({
+            left: 0, top: 0, right: this.canvas.width, bottom: this.canvas.height
+        });
     }
 
     /**

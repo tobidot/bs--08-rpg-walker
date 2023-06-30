@@ -111,8 +111,8 @@ export class MenuButtonGenerator extends MenuModelGenerator<MenuButtonGeneratorS
         item.label = label ?? this.data.label ?? name ?? "";
         item.area.left = this.data.x ?? 0;
         item.area.top = this.data.y ?? 0;
-        item.area.width = this.data.width ?? 0;
-        item.area.height = this.data.height ?? 0;
+        item.area.right = item.area.left + (this.data.width ?? 0);
+        item.area.bottom = item.area.top + (this.data.height ?? 0);
         item.icon = this.data.icon ?? null;
         item.parent = this.data.parent ?? null;
         if (this.data.on_select) {
@@ -167,7 +167,7 @@ export class MenuGroupGenerator extends MenuModelGenerator<MenuGroupGeneratorSet
      * Create an actual instance of the button.
      * @param name 
      */
-    public make(name: string, label?:string): MenuGroupModel {
+    public make(name: string, label?: string): MenuGroupModel {
         const item = new MenuGroupModel(
             this.globals,
             name,
@@ -175,8 +175,8 @@ export class MenuGroupGenerator extends MenuModelGenerator<MenuGroupGeneratorSet
         item.label = label ?? this.data.label ?? name ?? "";
         item.area.left = this.data.x ?? 0;
         item.area.top = this.data.y ?? 0;
-        item.area.width = this.data.width ?? 0;
-        item.area.height = this.data.height ?? 0;
+        item.area.right = item.area.left + (this.data.width ?? 0);
+        item.area.bottom = item.area.top + (this.data.height ?? 0);
         item.child_area.width = this.data.child_area_width ?? 100;
         item.icon_open = this.data.icon_open ?? null;
         item.icon_close = this.data.icon_close ?? null;
