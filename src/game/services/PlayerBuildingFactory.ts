@@ -3,10 +3,9 @@ import { Vector2D } from "../../library/math";
 import { Assets } from "../base/Assets";
 import { Game } from "../base/Game";
 import { Direction } from "../consts/Direction";
-import { EntityImages } from "./Entity";
-import { Player } from "./Player";
-import { PlayerBuilding } from "./PlayerBuilding";
-import { PlayerUnit } from "./PlayerUnit";
+import { EntityImages } from "../models/Entity";
+import { Player } from "../models/Player";
+import { PlayerBuilding } from "../models/PlayerBuilding";
 
 export class PlayerBuildingFactory {
 
@@ -20,11 +19,15 @@ export class PlayerBuildingFactory {
         position: Vector2D,
     ) {
         const entity = new PlayerBuilding(
+            this.game,
             position,
             this.getImageSet('tower'),
             128, 64, 256, 
-            'tower'
+            'castle'
         );
+        entity.hit_points = 100;
+        entity.attack_cooldown = 2 * (5) / ( 5 + this.game.model.player.tower_speed_level);
+        entity.attack_damage = 4 + this.game.model.player.tower_damage_level;
         this.game.model.addEntity(entity);
         this.player.buildings.push(new WeakRef(entity));
         return entity;

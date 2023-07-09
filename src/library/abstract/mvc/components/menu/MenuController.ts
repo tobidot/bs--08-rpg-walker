@@ -1,4 +1,4 @@
-import { KeyDownEvent, KeyName, KeyboardController, MouseController, MouseDownEvent, MouseHandler } from "../../../../input";
+import { KeyDownEvent, KeyName, KeyboardController, MouseController, MouseDownEvent, MouseHandler, MouseUpEvent } from "../../../../input";
 import { Vector2D } from "../../../../math";
 import { Controller } from "../../Controller";
 import { Model } from "../../Model";
@@ -73,7 +73,7 @@ export class MenuController implements Controller, KeyboardController, MouseCont
      * Check if a menu item has been clicked
      * @param event 
      */
-    public onMouseUp(event: MouseDownEvent): void {
+    public onMouseUp(event: MouseUpEvent): void {
         const menu = this.menu;
         const mouse = this.mouse;
         const mouse_position = mouse.position.cpy();

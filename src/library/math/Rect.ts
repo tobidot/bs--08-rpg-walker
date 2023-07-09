@@ -166,10 +166,8 @@ export class Rect implements RectLike, BoundingBox {
      * @see https://stackoverflow.com/a/306332/1048862
      * */
     public intersects(other: RectLike): boolean {
-        return this.x < other.x + other.w
-            && this.x + this.w > other.x
-            && this.y < other.y + other.h
-            && this.y + this.h > other.y;
+        return Math.abs(this.x - other.x) <= (other.w + this.w) / 2
+            && Math.abs(this.y - other.y) <= (other.h + this.h) / 2;
     }
 
     /**

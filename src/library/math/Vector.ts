@@ -123,9 +123,28 @@ export class Vector2D implements Vector2DLike {
     }
 
     /**
+     * 
+     * @param new_length 
+     * @returns 
+     */
+    public setLength(new_length: number): this {
+        const length = this.length();
+        if (length === 0) {
+            console.warn("cannot set length of zero length vector");
+            this.x = new_length;
+            this.y = 0;
+            return this;
+        } else {
+            this.x *= new_length / length;
+            this.y *= new_length / length;
+        }
+        return this;
+    }
+
+    /**
      * Make this vector a unit vector.
      */
-    public normalize() : this {
+    public normalize(): this {
         const length = this.length();
         if (length === 0) {
             return this;
@@ -138,7 +157,7 @@ export class Vector2D implements Vector2DLike {
     /**
      * @returns the angle of this vector in radians.
      */
-    public angle() : number {
+    public angle(): number {
         return Math.atan2(this.y, this.x);
     }
 }

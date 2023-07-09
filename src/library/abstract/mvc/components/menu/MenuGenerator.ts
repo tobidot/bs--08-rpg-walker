@@ -96,7 +96,7 @@ export class MenuButtonGenerator extends MenuModelGenerator<MenuButtonGeneratorS
         public readonly globals: MenuGlobals,
         settings: Partial<MenuButtonGeneratorSettings>,
     ) {
-        super(globals, Object.assign(MenuButtonGenerator.default, settings));
+        super(globals, Object.assign({}, MenuButtonGenerator.default, settings));
     }
 
     /**
@@ -159,7 +159,7 @@ export class MenuGroupGenerator extends MenuModelGenerator<MenuGroupGeneratorSet
         public readonly globals: MenuGlobals,
         settings: Partial<MenuButtonGeneratorSettings>,
     ) {
-        super(globals, Object.assign(MenuButtonGenerator.default, settings));
+        super(globals, Object.assign({}, MenuButtonGenerator.default, settings));
     }
 
 
@@ -211,7 +211,7 @@ export class MenuGenerator extends Configurable<MenuButtonGeneratorSettings & Me
         public readonly globals: MenuGlobals,
         settings: Partial<MenuButtonGeneratorSettings & MenuGroupGeneratorSettings> = {},
     ) {
-        super(Object.assign(MenuGenerator.default, settings));
+        super(Object.assign({},MenuGenerator.default, settings));
     }
 
     public button() {

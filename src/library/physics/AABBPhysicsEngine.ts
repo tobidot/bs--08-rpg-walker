@@ -218,6 +218,27 @@ export class AABBPhysicsEngine extends PhysicsEngine<AABBPhysicsProxy> {
         }
     }
 
+    /**
+     * Select all proxies that are within the given rectangle.
+     * Also includes the ones that are not fully within the rectangle.
+     * @param rect 
+     * @returns 
+     */
+    public pickWithinRect(rect: Rect): Array<AABBPhysicsProxy> {
+        return this.proxies.filter(proxy => rect.intersects(proxy.outerBox));
+    }
+
+    /**
+     * Select all proxies that are within the given circle.
+     * Measures from center to center
+     * @param rect 
+     * @returns 
+     */
+    public pickWithinCircle(center: Vector2D, radius: number): Array<AABBPhysicsProxy> {
+        const r2 = radius * radius;
+        return this.proxies.filter(proxy => center.cpy().sub(proxy.outerBox.center).length2() < r2);
+    }
+
 }
 
 /**
