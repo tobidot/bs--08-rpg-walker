@@ -24,11 +24,10 @@ export class GameModel {
     public neutral_factory: NeutralFactory;
     // 
     public is_running: boolean = false;
-    public time_since_last_spawn = 0;
-    public seconds_to_spawn = 5.0;
+    public seconds_to_next_spawn = 0;
     public wave_count: number = 0;
     public in_wave: boolean = false;
-    public seconds_to_next_wave: number = 30;
+    public seconds_to_next_wave: number = 0;
     public wave_strength_to_defeat: number = 0;
     //
     public world_size: Rect = Rect.fromCenterAndSize({ x: 400, y: 300 }, { x: 800, y: 600 });
@@ -36,6 +35,9 @@ export class GameModel {
     public is_debug_awareness: boolean = false;
     public is_debug_hitbox: boolean = false;
     public game_speed: number = 1.0;
+    public seconds_between_waves: number = 60;
+    public seconds_between_spawns: number = 5;
+    public waves_between_area_increase: number = 5;
 
     public constructor(
         protected readonly game: Game,
@@ -71,9 +73,9 @@ export class GameModel {
         });
 
         this.is_running = true;
-        this.time_since_last_spawn = 5;
+        this.seconds_to_next_spawn = this.seconds_between_spawns;
         this.wave_count = 0;
-        this.seconds_to_next_wave = 30;
+        this.seconds_to_next_wave = this.seconds_between_waves;
     }
 
     /**
@@ -179,24 +181,23 @@ export class GameModel {
             }
         });
 
-        this.time_since_last_spawn += delta_seconds;
-        if (this.time_since_last_spawn > this.seconds_to_spawn) {
-            this.time_since_last_spawn -= this.seconds_to_spawn;
-            this.seconds_to_spawn = 5.0;
+        this.seconds_to_next_spawn = Math.max(0, this.seconds_to_next_spawn - delta_seconds);
+        if (this.seconds_to_next_spawn <= 0 && this.in_wave) {
+            this.seconds_to_next_spawn += this.seconds_between_spawns;
             this.spawnStrengh(this.wave_count + 1);
         }
         this.seconds_to_next_wave -= delta_seconds;
         if (this.seconds_to_next_wave <= 0 && !this.in_wave) {
             this.in_wave = true;
-            this.seconds_to_next_wave = 20;
+            this.seconds_to_next_wave = this.seconds_between_waves;
             this.wave_count++;
-            const wave_strength =this.wave_strength_to_defeat =  Math.floor(Math.pow(this.wave_count + 1, 1.1) + this.wave_count * 5 + 2)
+            const wave_strength = this.wave_strength_to_defeat = Math.floor(Math.pow(this.wave_count, 1.1) + this.wave_count * 5 + 4)
             this.spawnStrengh(wave_strength);
         }
         if (this.in_wave && this.wave_strength_to_defeat <= 0 || this.seconds_to_next_wave <= 0) {
             this.in_wave = false;
-            this.seconds_to_next_wave = Math.min(20, this.seconds_to_next_wave + 5);
-            if (this.wave_count % 3 === 0) {
+            this.seconds_to_next_wave += this.seconds_between_waves;
+            if (this.wave_count % this.waves_between_area_increase === 0) {
                 this.increaseWorld();
             }
         }

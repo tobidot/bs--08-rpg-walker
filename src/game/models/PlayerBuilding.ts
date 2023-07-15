@@ -3,6 +3,7 @@ import { Collision, PhysicsEngine, PhysicsProxy } from "../../library/physics/Ph
 import { Game } from "../base/Game";
 import { Entity, EntityImages } from "./Entity";
 import { MonsterUnit } from "./MonsterUnit";
+import { PlayerUnit } from "./PlayerUnit";
 
 export class PlayerBuilding extends Entity {
 
@@ -49,7 +50,18 @@ export class PlayerBuilding extends Entity {
                 this.attack(target);
             }
         } else {
-            this.current_attack_cooldown -= delta_seconds;
+            let attack_speed_modifier = 1;
+            if (this.game.model.player.call_to_home) {
+                const units_in_castle = this.game.model.player.units.reduce((count, entity_ref) => {
+                    const entity = entity_ref.deref();
+                    if (!(entity instanceof PlayerUnit) || !entity.is_hidden) {
+                        return count;
+                    }
+                    return count + 1;
+                }, 0);
+                attack_speed_modifier += units_in_castle * 0.1;
+            }
+            this.current_attack_cooldown -= delta_seconds * attack_speed_modifier;
         }
     }
 

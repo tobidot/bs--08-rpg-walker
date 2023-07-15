@@ -50,11 +50,12 @@ export class PlayerUnitFactory {
             'worker'
         );
         entity.hitpoints = 4;
-        entity.attack_delay_seconds = 0.9;
-        entity.attack_damage = 1.5;
+        entity.attack_delay_seconds = 0.25;
+        entity.attack_damage = 0.0;
         entity.attack_area = 24;
         entity.awareness_range = 42;
         entity.harvest_wood = 1;
+        entity.can_hide = true;
         const speed = 40;
         entity.physics.velocity.set(Vector2D.fromAngle(Math.random() * Math.PI * 2, speed));
         this.game.model.addEntity(entity);

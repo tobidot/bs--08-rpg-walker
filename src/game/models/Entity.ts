@@ -13,6 +13,8 @@ export class Entity {
     // 
     public is_dead: boolean = false;
     public is_player: boolean = false;
+    public is_hidden: boolean = false;
+    public can_hide: boolean = false;
     // physics properties
     public hit_box: Rect;
     public velocity: Vector2D = new Vector2D(0, 0);

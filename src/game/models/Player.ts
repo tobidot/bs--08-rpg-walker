@@ -17,6 +17,7 @@ export class Player {
     //
     public unit_factory: PlayerUnitFactory;
     public building_factory: PlayerBuildingFactory;
+    public call_to_home: boolean = false;
 
     constructor(
         game: Game

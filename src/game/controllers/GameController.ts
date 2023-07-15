@@ -48,6 +48,9 @@ export class GameController extends GameBaseController implements Controller {
 
     public onKeyUp(event: KeyDownEvent): void {
         switch (event.key.name) {
+            case KeyName.Tab:
+                this.game.model.player.call_to_home = !this.game.model.player.call_to_home;
+                break;
             case KeyName.KeyD:
                 this.game.model.is_debug_awareness = !this.game.model.is_debug_awareness;
                 this.game.model.is_debug_hitbox = !this.game.model.is_debug_hitbox;
